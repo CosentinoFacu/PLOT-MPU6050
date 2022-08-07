@@ -1,0 +1,83 @@
+'''
+-------------------------------------
+Librerias a Utilizar 
+-------------------------------------
+'''
+import serial
+import numpy as np
+import matplotlib.pyplot as plt
+from time import perf_counter
+
+'''
+-------------------------------------
+Configuracion de comunicacion UART
+-------------------------------------
+'''
+
+ser = serial.Serial()
+ser.port = 'COM5'
+ser.baudrate = 115200
+ser.open()
+
+'''
+-------------------------------------
+Declaracion de variable
+-------------------------------------
+'''
+
+muestras=10
+
+x = np.ones(muestras).reshape(muestras,1)
+y = np.ones(muestras).reshape(muestras,1)
+z = np.ones(muestras).reshape(muestras,1)
+
+t = np.arange(0,muestras/10, 0.1, dtype=float).reshape(muestras,1)
+
+'''
+----------------------------------
+Funcion para descomponer String
+----------------------------------
+'''
+def descomponer(cadena):
+  for x in range(len(cadena)):
+      if (cadena[x] != '0') and (cadena[x] != '1') and (cadena[x] != '2') and (cadena[x] != '3') and (cadena[x] != '4') and (cadena[x] != '5') and (cadena[x] != '6') and (cadena[x] != '7') and (cadena[x] != '8') and (cadena[x] != '9'):
+        cadena = cadena.replace(cadena[x],' ')
+
+  cadena = cadena.replace(' ' ,'')
+  return int(cadena)
+
+'''
+------------------------------------
+Programa principal
+------------------------------------
+'''
+while True:
+  
+  for i in range(muestras):
+    
+      dato = ser.readline()
+      cadena = str(dato)
+      ex,ey,ez = cadena.split(sep=',')
+      
+      cadena=str(ex)
+      ex = descomponer(cadena)
+      cadena=str(ey)
+      ey = descomponer(cadena)
+      cadena=str(ez)
+      ez = descomponer(cadena)
+
+      x[i,0]=ex/100
+      y[i,0]=ey/100
+      z[i,0]=ez/100
+  
+
+  print("-----------Datos en eje X-------------------")
+  print(x)
+  print("-----------Datos en eje Y-------------------")
+  print(y)
+  print("-----------Datos en eje Y-------------------")
+  print(z)
+
+  plt.plot(t,x)
+  plt.show()
+  break
