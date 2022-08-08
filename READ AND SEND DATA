@@ -39,3 +39,4 @@ while True:
         trama=datax+','+datay+','+dataz       #Armamos la trama de datos
         uart.write(trama)                     #Enviamos Trama de dato
         uart.write('\n')                      #Enviamos salto de linea
+        print(time.ticks_ms()-tiempoant)      #Tiempo necesario para el read and set data
