@@ -34,13 +34,14 @@ Declaracion de variable
 -------------------------------------
 '''
 
-muestras=10                                   #Cantidad de muestras
+muestras=300                                  #Cantidad de muestras
 
 x = np.ones(muestras).reshape(muestras,1)     #Array avacio para eje X
 y = np.ones(muestras).reshape(muestras,1)     #Array avacio para eje Y
 z = np.ones(muestras).reshape(muestras,1)     #Array avacio para eje Z
  
 t = np.arange(0,muestras/10, 0.1, dtype=float).reshape(muestras,1)  #Base de tiempo para abscisa en graficas
+tm=np.arange(0,muestras, 1, dtype=float).reshape(muestras,1)        #Numero de muestras para abscisa en grafica
 
 '''
 ----------------------------------
@@ -61,45 +62,65 @@ Programa principal
 ------------------------------------
 '''
 while True:
+
+  entrada=input('Ingrese 1 para proceder: ')
+
+  if(entrada == '1'):
   
-  for i in range(muestras):                 #Iteramos la cantidad de muestras
-    
-      dato = ser.readline()                 #Leemos el puerto serie
-      cadena = str(dato)                    #convertimos el dato typo byte en un tipo string
-      ex,ey,ez = cadena.split(sep=',')      #separamos los datos X Y Z
+    for i in range(muestras):                 #Iteramos la cantidad de muestras
       
-      cadena=str(ex)                        #convertimos el dato X de un string a int
-      ex = descomponer(cadena)
-      cadena=str(ey)                        #convertimos el dato Y de un string a int
-      ey = descomponer(cadena)
-      cadena=str(ez)                        #convertimos el dato Z de un string a int
-      ez = descomponer(cadena)
+        dato = ser.readline()                 #Leemos el puerto serie
+        print(dato)
+        cadena = str(dato)                    #convertimos el dato typo byte en un tipo string
+        print(cadena)
+        ex,ey,ez = cadena.split(sep=',')      #separamos los datos X Y Z
+        print(ex)
+        print(ey)
+        print(ez)
+        
+        cadena=str(ex)                        #convertimos el dato X de un string a int
+        ex = descomponer(cadena)
+        print(ex)
+        cadena=str(ey)                        #convertimos el dato Y de un string a int
+        ey = descomponer(cadena)
+        print(ey)
+        cadena=str(ez)                        #convertimos el dato Z de un string a int
+        ez = descomponer(cadena)
+        print(ez)
 
-      x[i,0]=ex/100                         #Armamos el arreglo X
-      y[i,0]=ey/100                         #Armamos el arreglo Y
-      z[i,0]=ez/100                         #Armamos el arreglo Z
+        x[i,0]=ex/100                         #Armamos el arreglo X
+        y[i,0]=ey/100                         #Armamos el arreglo Y
+        z[i,0]=ez/100                         #Armamos el arreglo Z
+    
+
+    '''
+    ------------------------------------
+    Mostramos los datos
+    ------------------------------------
+    '''
+    print("-----------Datos en eje X-------------------")
+    print(x)
+    print("-----------Datos en eje Y-------------------")
+    print(y)
+    print("-----------Datos en eje Y-------------------")
+    print(z)
+
+    '''
+    ------------------------------------
+    Graficamos los datos
+    ------------------------------------
+    '''
+    plt.title('Curva de Aceleracion')
+    plt.xlabel('Tiempo')
+    plt.ylabel('Aceleracion')
+    plt.plot(tm,x,label="X")
+    plt.plot(tm,y,label="Y")
+    plt.plot(tm,z,label="Z")
+    plt.grid(alpha=0.4,color="SteelBlue",linestyle="-",linewidth=1.5)
+    plt.legend()
+    plt.show()
+    break
   
-
-  '''
-  ------------------------------------
-  Mostramos los datos
-  ------------------------------------
-  '''
-  print("-----------Datos en eje X-------------------")
-  print(x)
-  print("-----------Datos en eje Y-------------------")
-  print(y)
-  print("-----------Datos en eje Y-------------------")
-  print(z)
-
-  '''
-  ------------------------------------
-  Graficamos los datos
-  ------------------------------------
-  '''
-  
-  plt.plot(t,x)
-  plt.plot(t,y)
-  plt.plot(t,z)
-  plt.show()
-  break
+  else:
+    print('Programa Cancelado')
+    break
