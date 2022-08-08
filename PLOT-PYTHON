@@ -1,12 +1,21 @@
 '''
+Programa: Led Blink
+
+Proposito: Verificar funcionamento de placa ESP32
+
+Programadores: Facundo Cosentino, Sergio Zelaya
+Fecha: 1/08/2022
+'''
+
+
+'''
 -------------------------------------
 Librerias a Utilizar 
 -------------------------------------
 '''
-import serial
-import numpy as np
-import matplotlib.pyplot as plt
-from time import perf_counter
+import serial                         #Libreria para manejo de UART
+import numpy as np                    #Libreria para manejo de arrays 
+import matplotlib.pyplot as plt       #Libreria para hacer graficas
 
 '''
 -------------------------------------
@@ -14,9 +23,9 @@ Configuracion de comunicacion UART
 -------------------------------------
 '''
 
-ser = serial.Serial()
+ser = serial.Serial()                    #Elejimos el puerto y lo configuramos
 ser.port = 'COM5'
-ser.baudrate = 115200
+ser.baudrate = 9600
 ser.open()
 
 '''
@@ -25,26 +34,26 @@ Declaracion de variable
 -------------------------------------
 '''
 
-muestras=10
+muestras=10                                   #Cantidad de muestras
 
-x = np.ones(muestras).reshape(muestras,1)
-y = np.ones(muestras).reshape(muestras,1)
-z = np.ones(muestras).reshape(muestras,1)
-
-t = np.arange(0,muestras/10, 0.1, dtype=float).reshape(muestras,1)
+x = np.ones(muestras).reshape(muestras,1)     #Array avacio para eje X
+y = np.ones(muestras).reshape(muestras,1)     #Array avacio para eje Y
+z = np.ones(muestras).reshape(muestras,1)     #Array avacio para eje Z
+ 
+t = np.arange(0,muestras/10, 0.1, dtype=float).reshape(muestras,1)  #Base de tiempo para abscisa en graficas
 
 '''
 ----------------------------------
 Funcion para descomponer String
 ----------------------------------
 '''
-def descomponer(cadena):
-  for x in range(len(cadena)):
+def descomponer(cadena):           #ingresa cadena
+  for x in range(len(cadena)):     #Iteramos cadena y determinamos si el caracter es distento de un numero     
       if (cadena[x] != '0') and (cadena[x] != '1') and (cadena[x] != '2') and (cadena[x] != '3') and (cadena[x] != '4') and (cadena[x] != '5') and (cadena[x] != '6') and (cadena[x] != '7') and (cadena[x] != '8') and (cadena[x] != '9'):
-        cadena = cadena.replace(cadena[x],' ')
+        cadena = cadena.replace(cadena[x],' ') # remplazamos si es distinto de un numero por un espacio en blanco
 
-  cadena = cadena.replace(' ' ,'')
-  return int(cadena)
+  cadena = cadena.replace(' ' ,'')  #Remplazamos los espacion en blanco logrando borrarlos de la cadena
+  return int(cadena)                #convertimos este string en un entero
 
 '''
 ------------------------------------
@@ -53,24 +62,29 @@ Programa principal
 '''
 while True:
   
-  for i in range(muestras):
+  for i in range(muestras):                 #Iteramos la cantidad de muestras
     
-      dato = ser.readline()
-      cadena = str(dato)
-      ex,ey,ez = cadena.split(sep=',')
+      dato = ser.readline()                 #Leemos el puerto serie
+      cadena = str(dato)                    #convertimos el dato typo byte en un tipo string
+      ex,ey,ez = cadena.split(sep=',')      #separamos los datos X Y Z
       
-      cadena=str(ex)
+      cadena=str(ex)                        #convertimos el dato X de un string a int
       ex = descomponer(cadena)
-      cadena=str(ey)
+      cadena=str(ey)                        #convertimos el dato Y de un string a int
       ey = descomponer(cadena)
-      cadena=str(ez)
+      cadena=str(ez)                        #convertimos el dato Z de un string a int
       ez = descomponer(cadena)
 
-      x[i,0]=ex/100
-      y[i,0]=ey/100
-      z[i,0]=ez/100
+      x[i,0]=ex/100                         #Armamos el arreglo X
+      y[i,0]=ey/100                         #Armamos el arreglo Y
+      z[i,0]=ez/100                         #Armamos el arreglo Z
   
 
+  '''
+  ------------------------------------
+  Mostramos los datos
+  ------------------------------------
+  '''
   print("-----------Datos en eje X-------------------")
   print(x)
   print("-----------Datos en eje Y-------------------")
@@ -78,6 +92,14 @@ while True:
   print("-----------Datos en eje Y-------------------")
   print(z)
 
+  '''
+  ------------------------------------
+  Graficamos los datos
+  ------------------------------------
+  '''
+  
   plt.plot(t,x)
+  plt.plot(t,y)
+  plt.plot(t,z)
   plt.show()
   break
