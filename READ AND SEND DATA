@@ -18,25 +18,32 @@ imu = MPU6050(I2c)                                  #Configuramos MPU6050
 uart= UART(2,9600)                                  #Configuracion UART 9600baudios y el modulo 2
 
 tiempoant=0                                         #Variable para guardar el tiempo anterior
-
+muestras=0                                          #Variable para contar el numero de muestras
 trama=' '                                           #Variable para guardar la trama
 
 while True:
     
-    tiempoact = time.ticks_ms()          #Medimos el tiempo en el que estamos
+    flag = uart.read()                               #Esperamos una bandera para empezar a eviar datos
+    flag = str(flag)                                 #convertimos la bandera de byte a str
+    muestras=0                                       #inicializamos las muestras en 0
     
-    if(tiempoact-tiempoant >= 100):      #Vemos si ya paso 100ms entre la ultima medida
-        tiempoant = time.ticks_ms()      #Actualizamos el tiempo
-    
-        Gx = imu.accel.x   #Leemos Aceleracion en X
-        Gy = imu.accel.y   #Leemos Aceleracion en Y
-        Gz = imu.accel.z   #Leemos Aceleracion en Z
+    while flag.find('1') == 2 and muestras<=300: 
+        tiempoact = time.ticks_ms()          #Medimos el tiempo en el que estamos
         
-        datax = str(int(Gx*100))          #Damos formato al dato de si el dato es 0.23 entonces 23
-        datay = str(int(Gy*100))          #Damos formato al dato
-        dataz = str(int(Gz*100))          #Damos formato al dato
+        if(tiempoact-tiempoant >= 100):      #Vemos si ya paso 100ms entre la ultima medida
+            tiempoant = time.ticks_ms()      #Actualizamos el tiempo
         
-        trama=datax+','+datay+','+dataz       #Armamos la trama de datos
-        uart.write(trama)                     #Enviamos Trama de dato
-        uart.write('\n')                      #Enviamos salto de linea
-        print(time.ticks_ms()-tiempoant)      #Tiempo necesario para el read and set data
+            Gx = imu.accel.x   #Leemos Aceleracion en X
+            Gy = imu.accel.y   #Leemos Aceleracion en Y
+            Gz = imu.accel.z   #Leemos Aceleracion en Z
+            
+            datax = str(int(Gx*100))          #Damos formato al dato de si el dato es 0.23 entonces 23
+            datay = str(int(Gy*100))          #Damos formato al dato
+            dataz = str(int(Gz*100))          #Damos formato al dato
+            
+            trama=datax+','+datay+','+dataz       #Armamos la trama de datos
+            uart.write(trama)                     #Enviamos Trama de dato
+            uart.write('\n')                      #Enviamos salto de linea
+            muestras = muestras + 1               #Incrementamos el numero de muestras recibidas
+            #print(time.ticks_ms()-tiempoant)     #Imprimimos el tiempo que tarda 
+            #print(muestras)                      #Imprimimos el numero de muestras  
