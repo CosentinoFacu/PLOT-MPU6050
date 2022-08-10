@@ -1,11 +1,12 @@
 '''
-Programa: Led Blink
+Programa: PLOT-PYTHON
 
-Proposito: Verificar funcionamento de placa ESP32
+Proposito: Recepcion de datos de sensor MPU-6050 y graficas de los ejes X,Y,Z
 
 Programadores: Facundo Cosentino, Sergio Zelaya
-Fecha: 1/08/2022
+Fecha: 2/08/2022
 '''
+
 
 '''
 -------------------------------------
@@ -64,6 +65,9 @@ while True:
 
   entrada=input('Ingrese 1 para proceder: ')
 
+  ser.flushInput()                           #Vaciamos el buffer serial
+  ser.write(b'1')                            #Mnadamos una bandera para saber que debe empezar a transmitir datos
+  
   if(entrada == '1'):
   
     for i in range(muestras):                 #Iteramos la cantidad de muestras
@@ -110,7 +114,7 @@ while True:
     ------------------------------------
     '''
     plt.title('Curva de Aceleracion')
-    plt.xlabel('Tiempo')
+    plt.xlabel('Muestras')
     plt.ylabel('Aceleracion')
     plt.plot(tm,x,label="X")
     plt.plot(tm,y,label="Y")
