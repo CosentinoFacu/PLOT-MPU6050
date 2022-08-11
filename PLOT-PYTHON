@@ -34,7 +34,7 @@ Declaracion de variable
 -------------------------------------
 '''
 
-muestras=300                                  #Cantidad de muestras
+muestras=100                                  #Cantidad de muestras
 
 x = np.ones(muestras).reshape(muestras,1)     #Array avacio para eje X
 y = np.ones(muestras).reshape(muestras,1)     #Array avacio para eje Y
@@ -73,23 +73,23 @@ while True:
     for i in range(muestras):                 #Iteramos la cantidad de muestras
       
         dato = ser.readline()                 #Leemos el puerto serie
-        print(dato)
+        #print(dato)
         cadena = str(dato)                    #convertimos el dato typo byte en un tipo string
-        print(cadena)
+        #print(cadena)
         ex,ey,ez = cadena.split(sep=',')      #separamos los datos X Y Z
-        print(ex)
-        print(ey)
-        print(ez)
+        #print(ex)
+        #print(ey)
+        #print(ez)
         
         cadena=str(ex)                        #convertimos el dato X de un string a int
         ex = descomponer(cadena)
-        print(ex)
+        #print(ex)
         cadena=str(ey)                        #convertimos el dato Y de un string a int
         ey = descomponer(cadena)
-        print(ey)
+        #print(ey)
         cadena=str(ez)                        #convertimos el dato Z de un string a int
         ez = descomponer(cadena)
-        print(ez)
+        #print(ez)
 
         x[i,0]=ex/100                         #Armamos el arreglo X
         y[i,0]=ey/100                         #Armamos el arreglo Y
