@@ -40,20 +40,23 @@ x = np.ones(muestras).reshape(muestras,1)     #Array avacio para eje X
 y = np.ones(muestras).reshape(muestras,1)     #Array avacio para eje Y
 z = np.ones(muestras).reshape(muestras,1)     #Array avacio para eje Z
  
-t = np.arange(0,muestras/10, 0.1, dtype=float).reshape(muestras,1)  #Base de tiempo para abscisa en graficas
-tm=np.arange(0,muestras, 1, dtype=float).reshape(muestras,1)        #Numero de muestras para abscisa en grafica
+t = np.arange(0,muestras/10, 0.1, dtype=float).reshape(muestras,1)  #Base
+                                                                    #de tiempo 
+tm=np.arange(0,muestras, 1, dtype=float).reshape(muestras,1)        #Numero
+                                                                    #de muestras 
 
 '''
 ----------------------------------
 Funcion para descomponer String
 ----------------------------------
 '''
-def descomponer(cadena):           #ingresa cadena
-  for x in range(len(cadena)):     #Iteramos cadena y determinamos si el caracter es distento de un numero     
-      if (cadena[x] != '0') and (cadena[x] != '1') and (cadena[x] != '2') and (cadena[x] != '3') and (cadena[x] != '4') and (cadena[x] != '5') and (cadena[x] != '6') and (cadena[x] != '7') and (cadena[x] != '8') and (cadena[x] != '9'):
-        cadena = cadena.replace(cadena[x],' ') # remplazamos si es distinto de un numero por un espacio en blanco
+def descomponer(cadena):            #ingresa cadena
 
-  cadena = cadena.replace(' ' ,'')  #Remplazamos los espacion en blanco logrando borrarlos de la cadena
+  cadena = cadena.replace("b'"," ") #Remplazamos los 'b por ' '
+  cadena = cadena.replace("'"," ")  #Remplazamos los ' por ' '
+  cadena = cadena.replace("\\n"," ")#Remplazamos los \\n por ' '
+  cadena = cadena.replace(" " ,"")  #Remplazamos los espacion en blanco
+                                    #logrando borrarlos de la cadena
   return int(cadena)                #convertimos este string en un entero
 
 '''
@@ -65,8 +68,10 @@ while True:
 
   entrada=input('Ingrese 1 para proceder: ')
 
-  ser.flushInput()                           #Vaciamos el buffer serial
-  ser.write(b'1')                            #Mnadamos una bandera para saber que debe empezar a transmitir datos
+  ser.flushInput()                            #Vaciamos el buffer serial
+  ser.write(b'1')                             #Mnadamos una bandera para
+                                              #saber que debe empezar
+                                              #a transmitir datos
   
   if(entrada == '1'):
   
@@ -74,20 +79,24 @@ while True:
       
         dato = ser.readline()                 #Leemos el puerto serie
         #print(dato)
-        cadena = str(dato)                    #convertimos el dato typo byte en un tipo string
+        cadena = str(dato)                    #convertimos el dato typo
+                                              #byte en un tipo string
         #print(cadena)
         ex,ey,ez = cadena.split(sep=',')      #separamos los datos X Y Z
         #print(ex)
         #print(ey)
         #print(ez)
         
-        cadena=str(ex)                        #convertimos el dato X de un string a int
+        cadena=str(ex)                        #convertimos el dato X
+                                              #de un string a int
         ex = descomponer(cadena)
         #print(ex)
-        cadena=str(ey)                        #convertimos el dato Y de un string a int
+        cadena=str(ey)                        #convertimos el dato Y
+                                              #de un string a int
         ey = descomponer(cadena)
         #print(ey)
-        cadena=str(ez)                        #convertimos el dato Z de un string a int
+        cadena=str(ez)                        #convertimos el dato Z
+                                              #de un string a int
         ez = descomponer(cadena)
         #print(ez)
 
@@ -113,17 +122,17 @@ while True:
     Graficamos los datos
     ------------------------------------
     '''
-    plt.title('Curva de Aceleracion')
-    plt.xlabel('Muestras')
-    plt.ylabel('Aceleracion')
-    plt.plot(tm,x,label="X")
-    plt.plot(tm,y,label="Y")
-    plt.plot(tm,z,label="Z")
+    plt.title('Curva de Aceleracion')     #Titulo de la grafica
+    plt.xlabel('Muestras')                #label de absicas
+    plt.ylabel('Aceleracion')             #label de ordenadas
+    plt.plot(tm,x,label="X")              #plot x en funcion de muestra
+    plt.plot(tm,y,label="Y")              #plot y en funcion de muestras
+    plt.plot(tm,z,label="Z")              #plot z en funcion de muestras
     plt.grid(alpha=0.4,color="SteelBlue",linestyle="-",linewidth=1.5)
-    plt.legend()
-    plt.show()
+    plt.legend()                          #activamos los carteles
+    plt.show()                            #mostramos las curvas
     break
   
   else:
-    print('Programa Cancelado')
+    print('Programa Cancelado')           #programa cancelado
     break
