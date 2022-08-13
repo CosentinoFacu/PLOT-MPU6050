@@ -1,7 +1,8 @@
 '''
 Programa: PLOT-PYTHON
 
-Proposito: Recepcion de datos de sensor MPU-6050 y graficas de los ejes X,Y,Z
+Proposito: Recepcion de datos de sensor MPU-6050
+y graficas de los ejes X,Y,Z
 
 Programadores: Facundo Cosentino, Sergio Zelaya
 Fecha: 2/08/2022
@@ -13,17 +14,20 @@ Fecha: 2/08/2022
 Librerias a Utilizar 
 -------------------------------------
 '''
-import serial                         #Libreria para manejo de UART
-import numpy as np                    #Libreria para manejo de arrays 
-import matplotlib.pyplot as plt       #Libreria para hacer graficas
+#Libreria para manejo de UART
+import serial
+#Libreria para manejo de arrays 
+import numpy as np
+#Libreria para hacer graficas
+import matplotlib.pyplot as plt       
 
 '''
 -------------------------------------
 Configuracion de comunicacion UART
 -------------------------------------
 '''
-
-ser = serial.Serial()                    #Elejimos el puerto y lo configuramos
+#Elejimos el puerto y lo configuramos
+ser = serial.Serial()                    
 ser.port = 'COM5'
 ser.baudrate = 9600
 ser.open()
@@ -33,31 +37,40 @@ ser.open()
 Declaracion de variable
 -------------------------------------
 '''
+#Cantidad de muestras
+muestras=150                                  
 
-muestras=100                                  #Cantidad de muestras
+ #Array avacio para eje X, Y, Z
+x = np.ones(muestras).reshape(muestras,1)    
+y = np.ones(muestras).reshape(muestras,1)     
+z = np.ones(muestras).reshape(muestras,1)
 
-x = np.ones(muestras).reshape(muestras,1)     #Array avacio para eje X
-y = np.ones(muestras).reshape(muestras,1)     #Array avacio para eje Y
-z = np.ones(muestras).reshape(muestras,1)     #Array avacio para eje Z
- 
-t = np.arange(0,muestras/10, 0.1, dtype=float).reshape(muestras,1)  #Base
-                                                                    #de tiempo 
-tm=np.arange(0,muestras, 1, dtype=float).reshape(muestras,1)        #Numero
-                                                                    #de muestras 
+#Base de tiempo  
+t = np.arange(0,muestras/10, 0.1, dtype=float)
+t = t.reshape(muestras,1)
+#Numero de muestras
+tm=np.arange(0,muestras, 1, dtype=float)
+tm=tm..reshape(muestras,1)
 
 '''
 ----------------------------------
 Funcion para descomponer String
 ----------------------------------
 '''
-def descomponer(cadena):            #ingresa cadena
+def descomponer(cadena): #ingresa cadena
 
-  cadena = cadena.replace("b'"," ") #Remplazamos los 'b por ' '
-  cadena = cadena.replace("'"," ")  #Remplazamos los ' por ' '
-  cadena = cadena.replace("\\n"," ")#Remplazamos los \\n por ' '
-  cadena = cadena.replace(" " ,"")  #Remplazamos los espacion en blanco
-                                    #logrando borrarlos de la cadena
-  return int(cadena)                #convertimos este string en un entero
+  #Remplazamos los 'b por ' '
+  cadena = cadena.replace("b'"," ")
+  #Remplazamos los ' por ' '
+  cadena = cadena.replace("'"," ")
+  #Remplazamos los \\n por ' '
+  cadena = cadena.replace("\\n"," ")
+  #Remplazamos los espacion en blanco
+  #logrando borrarlos de la cadena
+  cadena = cadena.replace(" " ,"")  
+
+  #convertimos este string en un entero                                  
+  return int(cadena)                
 
 '''
 ------------------------------------
@@ -68,41 +81,38 @@ while True:
 
   entrada=input('Ingrese 1 para proceder: ')
 
-  ser.flushInput()                            #Vaciamos el buffer serial
-  ser.write(b'1')                             #Mnadamos una bandera para
-                                              #saber que debe empezar
-                                              #a transmitir datos
+  ser.flushInput()  #Vaciamos el buffer serial
+  ser.write(b'1')   #Mandamos una bandera para
+                    #saber que debe empezar
+                    #a transmitir datos
   
   if(entrada == '1'):
-  
-    for i in range(muestras):                 #Iteramos la cantidad de muestras
-      
-        dato = ser.readline()                 #Leemos el puerto serie
-        #print(dato)
-        cadena = str(dato)                    #convertimos el dato typo
-                                              #byte en un tipo string
-        #print(cadena)
-        ex,ey,ez = cadena.split(sep=',')      #separamos los datos X Y Z
-        #print(ex)
-        #print(ey)
-        #print(ez)
-        
-        cadena=str(ex)                        #convertimos el dato X
-                                              #de un string a int
-        ex = descomponer(cadena)
-        #print(ex)
-        cadena=str(ey)                        #convertimos el dato Y
-                                              #de un string a int
-        ey = descomponer(cadena)
-        #print(ey)
-        cadena=str(ez)                        #convertimos el dato Z
-                                              #de un string a int
-        ez = descomponer(cadena)
-        #print(ez)
 
-        x[i,0]=ex/100                         #Armamos el arreglo X
-        y[i,0]=ey/100                         #Armamos el arreglo Y
-        z[i,0]=ez/100                         #Armamos el arreglo Z
+    #Iteramos la cantidad de muestras
+    for i in range(muestras):                 
+
+        #Leemos el puerto serie      
+        dato = ser.readline()
+        #convertimos el dato typo byte
+        #en un tipo string
+        cadena = str(dato)                    
+
+        #separamos los datos X Y Z                                     
+        ex,ey,ez = cadena.split(sep=',')      
+
+        #--- Convertimos X Y Z a tipo int ---
+        
+        cadena=str(ex)                                                                   
+        ex = descomponer(cadena)
+        cadena=str(ey)                                                               
+        ey = descomponer(cadena)
+        cadena=str(ez)                                                     
+        ez = descomponer(cadena)
+
+        #---Armamos los arreglos ---
+        x[i,0]=ex/100   #Armamos el arreglo X
+        y[i,0]=ey/100   #Armamos el arreglo Y
+        z[i,0]=ez/100   #Armamos el arreglo Z
     
 
     '''
@@ -110,11 +120,11 @@ while True:
     Mostramos los datos
     ------------------------------------
     '''
-    print("-----------Datos en eje X-------------------")
+    print("-----------Datos en eje X--------------")
     print(x)
-    print("-----------Datos en eje Y-------------------")
+    print("-----------Datos en eje Y--------------")
     print(y)
-    print("-----------Datos en eje Y-------------------")
+    print("-----------Datos en eje Y--------------")
     print(z)
 
     '''
@@ -122,17 +132,27 @@ while True:
     Graficamos los datos
     ------------------------------------
     '''
-    plt.title('Curva de Aceleracion')     #Titulo de la grafica
-    plt.xlabel('Muestras')                #label de absicas
-    plt.ylabel('Aceleracion')             #label de ordenadas
-    plt.plot(tm,x,label="X")              #plot x en funcion de muestra
-    plt.plot(tm,y,label="Y")              #plot y en funcion de muestras
-    plt.plot(tm,z,label="Z")              #plot z en funcion de muestras
+    #Titulo de la grafica
+    plt.title('Curva de Aceleracion')
+    #label de absicas
+    plt.xlabel('Muestras')
+    #label de ordenadas
+    plt.ylabel('Aceleracion')
+    #plot x en funcion de muestra
+    plt.plot(tm,x,label="X")
+    #plot y en funcion de muestras
+    plt.plot(tm,y,label="Y")
+    #plot z en funcion de muestras
+    plt.plot(tm,z,label="Z")
+    #activamos el grid
     plt.grid(alpha=0.4,color="SteelBlue",linestyle="-",linewidth=1.5)
-    plt.legend()                          #activamos los carteles
-    plt.show()                            #mostramos las curvas
+    #activamos los carteles
+    plt.legend()
+    #mostramos las curvas
+    plt.show()                            
     break
   
   else:
+    #programa cancelado
     print('Programa Cancelado')           #programa cancelado
     break
