@@ -1,49 +1,83 @@
 '''
 Programa: Armado de trama de datos MPU6050
 
-Proposito: Armar trama de datos con el formato 'GX,GY,GZ\n' para recepcoinar con
-nuestro programa de python "PLOT-PYTHON" en el repositorio  "PLOT-MPU6050" y poder ver de manera grafica los datos 
+Proposito: Armar trama de datos con el formato
+'GX,GY,GZ\n' para recepcionar con nuestro programa
+de python "PLOT-PYTHON" en el repositorio
+"PLOT-MPU6050" y poder ver de manera grafica los datos 
 
 Programadores: Facundo Cosentino, Sergio Zelaya
 Fecha: 2/08/2022
 '''
 
-from imu import MPU6050              #Importamos MPU_6050 de imu
-import time                          #Importamos time para los delay
-from machine import Pin, I2C, UART   #Importamos Pin e I2C de machine
+#Importamos MPU_6050 de imu
+from imu import MPU6050
+#Importamos time para los delay
+import time
+#Importamos Pin e I2C de machine
+from machine import Pin, I2C, UART  
 
 
-I2c = I2C(0,sda=Pin(21),scl=Pin(22),freq=400000)    #Configuramos comunicacion I2C 
-imu = MPU6050(I2c)                                  #Configuramos MPU6050
-uart= UART(2,9600)                                  #Configuracion UART 9600baudios y el modulo 2
+#Configuramos comunicacion I2C 
+I2c = I2C(0,sda=Pin(21),scl=Pin(22),freq=400000)
+#Configuramos MPU6050
+imu = MPU6050(I2c)                                  
+#Configuracion UART 9600baudios y el modulo 2
+uart= UART(2,9600)                                  
 
-tiempoant=0                                         #Variable para guardar el tiempo anterior
-muestras=0                                          #Variable para contar el numero de muestras
-trama=' '                                           #Variable para guardar la trama
+#Variable para guardar el tiempo anterior
+tiempoant=0
+#Variable para contar el numero de muestras
+muestras=0
+#Variable para guardar la trama
+trama=' '                                           
 
 while True:
     
-    flag = uart.read()                               #Esperamos una bandera para empezar a eviar datos
-    flag = str(flag)                                 #convertimos la bandera de byte a str
-    muestras=0                                       #inicializamos las muestras en 0
+    #Esperamos una bandera para empezar a eviar datos
+    flag = uart.read()
+    #convertimos la bandera de byte a str
+    flag = str(flag)
+    #inicializamos las muestras en 0
+    muestras=0
     
-    while flag.find('1') == 2 and muestras<=300: 
-        tiempoact = time.ticks_ms()          #Medimos el tiempo en el que estamos
+    #leeremos 150 muestras luego de tener
+    #la bandera en '1'
+    while flag.find('1') == 2 and muestras<=150:
+        #Medimos el tiempo en el que estamos
+        tiempoact = time.ticks_ms()          
         
-        if(tiempoact-tiempoant >= 100):      #Vemos si ya paso 100ms entre la ultima medida
-            tiempoant = time.ticks_ms()      #Actualizamos el tiempo
+        #Vemos si ya paso 100ms entre la ultima medida
+        if(tiempoact-tiempoant >= 100):
+            #Actualizamos el tiempo
+            tiempoant = time.ticks_ms()      
         
-            Gx = imu.accel.x   #Leemos Aceleracion en X
-            Gy = imu.accel.y   #Leemos Aceleracion en Y
-            Gz = imu.accel.z   #Leemos Aceleracion en Z
+            #Leemos Aceleracion en X
+            Gx = imu.accel.x-0.06112061
+    
+            #Leemos Aceleracion en Y
+            Gy = imu.accel.y+0.03150146
+    
+            #Leemos Aceleracion en Z
+            Gz = imu.accel.z+0.07965576
             
-            datax = str(int(Gx*100))          #Damos formato al dato de si el dato es 0.23 entonces 23
-            datay = str(int(Gy*100))          #Damos formato al dato
-            dataz = str(int(Gz*100))          #Damos formato al dato
+            #Damos formato al dato
+            datax = str(int(Gx*100))          
+            datay = str(int(Gy*100))          
+            dataz = str(int(Gz*100))          
             
-            trama=datax+','+datay+','+dataz       #Armamos la trama de datos
-            uart.write(trama)                     #Enviamos Trama de dato
-            uart.write('\n')                      #Enviamos salto de linea
-            muestras = muestras + 1               #Incrementamos el numero de muestras recibidas
-            #print(time.ticks_ms()-tiempoant)     #Imprimimos el tiempo que tarda 
-            #print(muestras)                      #Imprimimos el numero de muestras  
+            #Armamos la trama de datos
+            trama=datax+','+datay+','+dataz       
+            #Enviamos Trama de dato
+            uart.write(trama)                     
+            #Enviamos salto de linea
+            uart.write('\n')                      
+            #Incrementamos el numero de
+            #muestras recibidas
+            muestras = muestras + 1               
+            
+            #Imprimimos el tiempo que tarda 
+            #print(time.ticks_ms()-tiempoant)     
+            
+            #Imprimimos el numero de muestras 
+            print(muestras)   
