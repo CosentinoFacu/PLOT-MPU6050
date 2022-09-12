@@ -82,9 +82,13 @@ while True:
   entrada=input('Ingrese 1 para proceder: ')
 
   ser.flushInput()  #Vaciamos el buffer serial
-  ser.write(b'1')   #Mandamos una bandera para
+  
+  ser.write(b'1\n') #Mandamos una bandera para
                     #saber que debe empezar
                     #a transmitir datos
+  ser.write(b'150\n') #Mandamos cantidad
+                      #de muestra que queremos
+
   
   if(entrada == '1'):
 
