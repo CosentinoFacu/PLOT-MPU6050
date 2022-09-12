@@ -8,6 +8,12 @@ de python "PLOT-PYTHON" en el repositorio
 
 Programadores: Facundo Cosentino, Sergio Zelaya
 Fecha: 2/08/2022
+
+Rectificacion: Enviar cantidad de muestras por
+puerto serie.
+
+Fecha: 11/09/2022
+
 '''
 
 #Importamos MPU_6050 de imu
@@ -27,23 +33,34 @@ uart= UART(2,9600)
 
 #Variable para guardar el tiempo anterior
 tiempoant=0
+#Variable para controlar la cantidad de muestras
+nmuestras=0
 #Variable para contar el numero de muestras
 muestras=0
 #Variable para guardar la trama
 trama=' '                                           
 
 while True:
+
+    #Esperamos una bandera para empezar a enviar datos
+    flag = uart.readline()
     
-    #Esperamos una bandera para empezar a eviar datos
-    flag = uart.read()
-    #convertimos la bandera de byte a str
-    flag = str(flag)
+    while flag == None:
+        flag = uart.readline()
+        
+    #convertimos la bandera de byte a str y luego a int
+    flag = int(flag)
+
+    #Esperamos una cantidad de muestras deseadas
+    nmuestras = uart.readline()
+    nmuestras = int(nmuestras)
+
     #inicializamos las muestras en 0
     muestras=0
     
     #leeremos 150 muestras luego de tener
     #la bandera en '1'
-    while flag.find('1') == 2 and muestras<=150:
+    while flag == 1 and muestras<=nmuestras:
         #Medimos el tiempo en el que estamos
         tiempoact = time.ticks_ms()          
         
@@ -80,4 +97,4 @@ while True:
             #print(time.ticks_ms()-tiempoant)     
             
             #Imprimimos el numero de muestras 
-            print(muestras)   
+            print(muestras)  
