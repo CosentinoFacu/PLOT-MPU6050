@@ -34,8 +34,10 @@ uart= UART(2,9600)
 #Variable para guardar el tiempo anterior
 tiempoant=0
 #Variable para controlar la cantidad de muestras
+#a recibir
 nmuestras=0
 #Variable para contar el numero de muestras
+#actual que tenemos
 muestras=0
 #Variable para guardar la trama
 trama=' '                                           
@@ -58,8 +60,8 @@ while True:
     #inicializamos las muestras en 0
     muestras=0
     
-    #leeremos 150 muestras luego de tener
-    #la bandera en '1'
+    #leeremos (nmuestras = XX) muestras luego de tener
+    #la bandera en 1
     while flag == 1 and muestras<=nmuestras:
         #Medimos el tiempo en el que estamos
         tiempoact = time.ticks_ms()          
@@ -97,4 +99,4 @@ while True:
             #print(time.ticks_ms()-tiempoant)     
             
             #Imprimimos el numero de muestras 
-            print(muestras)  
+            print(muestras) 
