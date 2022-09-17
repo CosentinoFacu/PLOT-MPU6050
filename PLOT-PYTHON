@@ -6,6 +6,9 @@ y graficas de los ejes X,Y,Z
 
 Programadores: Facundo Cosentino, Sergio Zelaya
 Fecha: 2/08/2022
+
+Rectificacion: ingresar la cantidad de muestras
+por teclado y enviar al microcontrolador
 '''
 
 
@@ -14,6 +17,8 @@ Fecha: 2/08/2022
 Librerias a Utilizar 
 -------------------------------------
 '''
+#Libreria para manejo de Tiempos
+import time
 #Libreria para manejo de UART
 import serial
 #Libreria para manejo de arrays 
@@ -28,7 +33,7 @@ Configuracion de comunicacion UART
 '''
 #Elejimos el puerto y lo configuramos
 ser = serial.Serial()                    
-ser.port = 'COM5'
+ser.port = 'COM9'
 ser.baudrate = 9600
 ser.open()
 
@@ -38,19 +43,7 @@ Declaracion de variable
 -------------------------------------
 '''
 #Cantidad de muestras
-muestras=150                                  
-
- #Array avacio para eje X, Y, Z
-x = np.ones(muestras).reshape(muestras,1)    
-y = np.ones(muestras).reshape(muestras,1)     
-z = np.ones(muestras).reshape(muestras,1)
-
-#Base de tiempo  
-t = np.arange(0,muestras/10, 0.1, dtype=float)
-t = t.reshape(muestras,1)
-#Numero de muestras
-tm=np.arange(0,muestras, 1, dtype=float)
-tm=tm..reshape(muestras,1)
+#muestras=150                                  
 
 '''
 ----------------------------------
@@ -86,9 +79,34 @@ while True:
   ser.write(b'1\n') #Mandamos una bandera para
                     #saber que debe empezar
                     #a transmitir datos
-  ser.write(b'150\n') #Mandamos cantidad
-                      #de muestra que queremos
+                    
+  muestras=input('Ingrese cantidad de muestras: ')
+  bmuestras=muestras+'\n'
+  bmuestras=bmuestras.encode()
+  
+  ser.write(bmuestras) #Mandamos cantidad
+                       #de muestra que queremos
+                       
+  muestras=int(muestras)
 
+  '''
+  -------------------------------------
+  Declaracion de variable en tiempo de
+  ejecucion
+  -------------------------------------
+  '''
+
+  #Array avacio para eje X, Y, Z
+  x = np.ones(muestras).reshape(muestras,1)    
+  y = np.ones(muestras).reshape(muestras,1)     
+  z = np.ones(muestras).reshape(muestras,1)
+
+  #Base de tiempo  
+  t = np.arange(0,muestras/10, 0.1, dtype=float)
+  t = t.reshape(muestras,1)
+  #Numero de muestras
+  tm=np.arange(0,muestras, 1, dtype=float)
+  tm=tm.reshape(muestras,1)
   
   if(entrada == '1'):
 
