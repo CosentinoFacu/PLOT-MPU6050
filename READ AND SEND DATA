@@ -55,6 +55,10 @@ while True:
 
     #Esperamos una cantidad de muestras deseadas
     nmuestras = uart.readline()
+    while nmuestras == None:
+        nmuestras = uart.readline()
+    
+    print(nmuestras)
     nmuestras = int(nmuestras)
 
     #inicializamos las muestras en 0
